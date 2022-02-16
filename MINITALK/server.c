@@ -6,28 +6,88 @@
 /*   By: airis <airis@student.21-school.ru>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 15:06:19 by airis             #+#    #+#             */
-/*   Updated: 2022/02/02 17:46:27 by airis            ###   ########.fr       */
+/*   Updated: 2022/02/16 19:11:26 by airis            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <limits.h>
 #include <unistd.h>
 #include <signal.h>
+#include <stdlib.h>
+
+char	*ft_strjoin_mod(char const *s1, char ch)
+{
+	int		len;
+	char	*str;
+	int		i;
+
+	if (!s1)
+		return (0);
+	i = 0;
+	len = 0;
+	while (s1[i++])
+		len++;
+	str = malloc(sizeof(*str) * (len + 1) + 1);
+	if (str == 0)
+		return (0);
+	i = -1;
+	while (++i < len)
+		str[i] = s1[i];
+	str[i++] = ch;
+	str[i] = '\0';
+	return (str);
+}
+
+// static char	*ft_strdup(const char *str)
+// {
+// 	int		len;
+// 	int		j;
+// 	char	*dest;
+
+// 	j = 0;
+// 	len = 0;
+// 	while (str[len++])
+// 		;
+// 	dest = (char *)malloc(sizeof(*dest) * len + 1);
+// 	if (dest == 0)
+// 		return (0);
+// 	while (j < len)
+// 	{
+// 		dest[j] = str[j];
+// 		j++;
+// 	}
+// 	dest[j] = '\0';
+// 	return (dest);
+// }
 
 static void	sig_handler(int sig)
 {
 	static char	buf;
 	static int	bit = 7;
+	static char	*str_to_print = "";
+	static int	len = 0;
 
 	if (sig == SIGUSR1)
 		buf |= (1 << bit);
-	if (sig == SIGUSR2)
-		buf &= ~(1 << bit);
 	bit--;
 	if (bit == -1)
 	{
+		// if (!str_to_print)
+		// 	str_to_print = ft_strdup("");
+		if (buf != '\0')
+		{
+			str_to_print = ft_strjoin_mod(str_to_print, buf);
+			len++;
+		}
+		if (buf == '\0')
+		{
+			write(1, str_to_print, len);
+			free(str_to_print);
+			str_to_print = NULL;
+			len = 0;
+		}
+		buf = 0;
 		bit = 7;
-		write(1, &buf, 1);
 	}
 }
 

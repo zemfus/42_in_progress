@@ -6,7 +6,7 @@
 /*   By: airis <airis@student.21-school.ru>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 15:06:21 by airis             #+#    #+#             */
-/*   Updated: 2022/02/02 17:46:29 by airis            ###   ########.fr       */
+/*   Updated: 2022/02/16 18:47:51 by airis            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	send_char(pid_t pid, char c)
 			kill(pid, SIGUSR2);
 		}
 		bit--;
-		usleep(100);
+		usleep(150);
 	}
 }
 
@@ -84,10 +84,17 @@ int	main(int argc, char*argv[])
 	pid_t	pid;
 	char	*str;
 
-	if (argc < 3)
+	if (argc != 3)
 	{
 		ft_putstr("\e[1;31m");
 		ft_putstr("Error: Проверьте аргументы!! \nПример ./client PID \"BlaBla\"");
+		ft_putstr("\e[0m");
+		return (0);
+	}
+	if (ft_atoi(argv[1]) <= 0)
+	{
+		ft_putstr("\e[1;31m");
+		ft_putstr("Error: Мб pid будет положительным числом?");
 		ft_putstr("\e[0m");
 		return (0);
 	}
